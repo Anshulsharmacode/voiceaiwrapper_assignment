@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "organization",
     "project",
     "task",
+    "taskComment",
 ]
 
 MIDDLEWARE = [
