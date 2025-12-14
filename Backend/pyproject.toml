@@ -7,6 +7,7 @@ dependencies = [
     "Django==4.2.27",
     "psycopg2-binary==2.9.9",
     "python-decouple==3.8",
+    "graphene-django==3.1.5",
 ]
 
 [tool.hatch.build.targets.wheel]
