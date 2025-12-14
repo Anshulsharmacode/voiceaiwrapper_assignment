@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=100)),
                 ("slug", models.SlugField(unique=True)),
-                ("contact_email", models.EmailField(max_length=254)),
+                ("contact_email", models.EmailField(unique=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
