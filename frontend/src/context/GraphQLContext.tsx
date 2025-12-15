@@ -8,7 +8,7 @@ import { HttpLink } from "@apollo/client/link/http";
 import { ApolloProvider, useMutation, useQuery } from "@apollo/client/react";
 
 const GRAPHQL_ENDPOINT =
-  import.meta.env.VITE_GRAPHQL_ENDPOINT || "http://localhost:8000/graphql/";
+  import.meta.env.VITE_GRAPHQL_ENDPOINT ||"https://voiceaiwrapper-assignment.onrender.com" || "http://localhost:8000/graphql/";
 
 const httpLink = new HttpLink({
   uri: GRAPHQL_ENDPOINT,
