@@ -8,6 +8,7 @@ dependencies = [
     "psycopg2-binary==2.9.9",
     "python-decouple==3.8",
     "graphene-django==3.1.5",
+    "django-cors-headers==4.3.1",
 ]
 
 [tool.hatch.build.targets.wheel]
