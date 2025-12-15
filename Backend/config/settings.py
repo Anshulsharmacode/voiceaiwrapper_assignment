@@ -62,7 +62,8 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        
+        "DIRS": [BASE_DIR.parent / "frontend" / "dist"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -131,6 +132,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+
+# Directory where collectstatic will gather all static files (for production)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Let Django serve the built frontend assets from Vite (frontend/dist)
+STATICFILES_DIRS = [
+    BASE_DIR.parent / "frontend" / "dist",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -9,67 +9,71 @@ interface ProjectsListProps {
 const ProjectsList: React.FC<ProjectsListProps> = ({ organizationId, onProjectSelect }) => {
   const { loading, error, data } = useProjectsByOrganization(organizationId) as any;
 
-  if (loading) return <div className="text-center py-8">Loading projects...</div>;
-  if (error) return <div className="text-red-500 text-center py-8">Error: {error.message}</div>;
+  if (loading) return <div className="text-center py-8 text-slate-300">Loading projects...</div>;
+  if (error) return <div className="text-red-300 text-center py-8">Error: {error.message}</div>;
 
   const projects = (data as any)?.projectsByOrganization || [];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500/15 text-blue-100 border border-blue-500/30';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-500/15 text-emerald-100 border border-emerald-500/30';
       case 'on_hold':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-500/15 text-amber-100 border border-amber-500/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-500/15 text-slate-100 border border-slate-500/30';
     }
   };
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Projects</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-white">Projects</h2>
+        <span className="text-sm text-slate-400">
+          {projects.length} projects
+        </span>
+      </div>
       {projects.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No projects found</div>
+        <div className="text-center py-8 text-slate-400">No projects found</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project: any) => (
             <div
               key={project.id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
-              onClick={() => onProjectSelect?.(project.id)}
+              className="card-surface rounded-2xl p-6 hover:shadow-xl transition hover:-translate-y-1 cursor-pointer border border-white/5"
+              onClick={() => onProjectSelect?.(Number(project.id))}
             >
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-xl font-semibold text-gray-800">{project.name}</h3>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+              <div className="flex justify-between items-start mb-4">
+                <div className="space-y-1">
+                  <p className="text-xs uppercase tracking-[0.2em] text-blue-200">Project</p>
+                  <h3 className="text-xl font-semibold text-white">{project.name}</h3>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(project.status)}`}>
                   {project.status}
                 </span>
               </div>
               {project.description && (
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
+                <p className="text-slate-300 text-sm mb-4 line-clamp-3">{project.description}</p>
               )}
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Tasks:</span>
-                  <span className="font-medium">{project.taskCount || 0}</span>
+                <div className="flex justify-between text-sm text-slate-300">
+                  <span>Tasks</span>
+                  <span className="font-semibold text-white">{project.taskCount || 0}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Completed:</span>
-                  <span className="font-medium">{project.completedTaskCount || 0}</span>
+                <div className="flex justify-between text-sm text-slate-300">
+                  <span>Completed</span>
+                  <span className="font-semibold text-emerald-200">{project.completedTaskCount || 0}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all"
-                    style={{ width: `${project.completionRate || 0}%` }}
-                  ></div>
-                </div>
-                <div className="text-xs text-gray-500 text-center mt-1">
-                  {project.completionRate || 0}% Complete
-                </div>
+               
+               
                 {project.dueDate && (
-                  <div className="text-xs text-gray-500 mt-2">
-                    Due: {new Date(project.dueDate).toLocaleDateString()}
+                  <div className="text-xs text-slate-400 mt-2 flex items-center justify-between">
+                    <span>Due</span>
+                    <span className="text-slate-200">
+                      {new Date(project.dueDate).toLocaleDateString()}
+                    </span>
                   </div>
                 )}
               </div>

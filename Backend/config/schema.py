@@ -4,6 +4,7 @@ from django.db.models import Count, Q
 from datetime import datetime
 
 from organization.models import Organization
+from organization.service import OrganizationService
 from project.models import Project
 from task.models import Task
 from taskComment.models import TaskComment
@@ -50,7 +51,7 @@ class TaskType(DjangoObjectType):
     
     class Meta:
         model = Task
-        fields = ("id", "project", "title", "description", "status", "assignee_email", "due_date", "created_at")
+        fields = ("id", "project", "title", "description", "status", "assignee_email", "due_date", "created_at", "comments")
     
     def resolve_comment_count(self, info):
         """Calculate number of comments for this task."""
@@ -104,6 +105,18 @@ class TaskCommentInput(graphene.InputObjectType):
     author_email = graphene.String(required=True)
 
 
+class OrganizationInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    slug = graphene.String()
+    contact_email = graphene.String(required=True)
+
+
+class OrganizationUpdateInput(graphene.InputObjectType):
+    name = graphene.String()
+    slug = graphene.String()
+    contact_email = graphene.String()
+
+
 # Project Statistics Type
 class ProjectStatisticsType(graphene.ObjectType):
     total_projects = graphene.Int()
@@ -119,6 +132,27 @@ class ProjectStatisticsType(graphene.ObjectType):
 
 # Queries
 class Query(graphene.ObjectType):
+    # List or search organizations
+    organizations = graphene.List(
+        OrganizationType,
+        search=graphene.String(description="Optional search term for name, slug, or email"),
+        description="List all organizations or search by term"
+    )
+
+    # Single organization by ID
+    organization = graphene.Field(
+        OrganizationType,
+        organization_id=graphene.Int(required=True),
+        description="Get a single organization by ID"
+    )
+
+    # Single organization by slug
+    organization_by_slug = graphene.Field(
+        OrganizationType,
+        slug=graphene.String(required=True),
+        description="Get a single organization by slug"
+    )
+
     # List projects for an organization
     projects_by_organization = graphene.List(
         ProjectType,
@@ -146,7 +180,43 @@ class Query(graphene.ObjectType):
         task_id=graphene.Int(required=True),
         description="Get a single task by ID"
     )
+
+    # List all tasks for a specific project
+    tasks_by_project = graphene.List(
+        TaskType,
+        project_id=graphene.Int(required=True),
+        description="List all tasks for a specific project"
+    )
     
+    def resolve_organizations(self, info, search=None):
+        """Resolve all organizations or search by term."""
+        try:
+            if search:
+                return OrganizationService.search_organizations(search)
+            return OrganizationService.get_all_organizations()
+        except Exception as e:
+            raise Exception(f"Error fetching organizations: {str(e)}")
+
+    def resolve_organization(self, info, organization_id):
+        """Resolve a single organization by ID."""
+        try:
+            organization = OrganizationService.get_organization_by_id(organization_id)
+            if not organization:
+                raise Exception(f"Organization with ID {organization_id} not found")
+            return organization
+        except Exception as e:
+            raise Exception(f"Error fetching organization: {str(e)}")
+
+    def resolve_organization_by_slug(self, info, slug):
+        """Resolve a single organization by slug."""
+        try:
+            organization = OrganizationService.get_organization_by_slug(slug)
+            if not organization:
+                raise Exception(f"Organization with slug '{slug}' not found")
+            return organization
+        except Exception as e:
+            raise Exception(f"Error fetching organization by slug: {str(e)}")
+
     def resolve_projects_by_organization(self, info, organization_id):
         """Resolve projects for an organization."""
         try:
@@ -211,6 +281,14 @@ class Query(graphene.ObjectType):
             return task
         except Exception as e:
             raise Exception(f"Error fetching task: {str(e)}")
+
+    def resolve_tasks_by_project(self, info, project_id):
+        """Resolve tasks for a project."""
+        try:
+            tasks = TaskService.get_tasks_by_project(project_id)
+            return tasks
+        except Exception as e:
+            raise Exception(f"Error fetching tasks: {str(e)}")
 
 
 # Mutations
@@ -325,6 +403,71 @@ class UpdateTask(graphene.Mutation):
             return UpdateTask(task=None, success=False, errors=[str(e)])
 
 
+class CreateOrganization(graphene.Mutation):
+    class Arguments:
+        input = OrganizationInput(required=True)
+
+    organization = graphene.Field(OrganizationType)
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, input):
+        try:
+            organization = OrganizationService.create_organization(
+                name=input.name,
+                slug=input.slug,
+                contact_email=input.contact_email
+            )
+            return CreateOrganization(organization=organization, success=True, errors=[])
+        except Exception as e:
+            return CreateOrganization(organization=None, success=False, errors=[str(e)])
+
+
+class UpdateOrganization(graphene.Mutation):
+    class Arguments:
+        organization_id = graphene.Int(required=True)
+        input = OrganizationUpdateInput(required=True)
+
+    organization = graphene.Field(OrganizationType)
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, organization_id, input):
+        try:
+            update_data = {}
+            if input.name is not None:
+                update_data['name'] = input.name
+            if input.slug is not None:
+                update_data['slug'] = input.slug
+            if input.contact_email is not None:
+                update_data['contact_email'] = input.contact_email
+
+            organization = OrganizationService.update_organization(organization_id, **update_data)
+            if not organization:
+                return UpdateOrganization(organization=None, success=False, errors=[f"Organization with ID {organization_id} not found"])
+
+            return UpdateOrganization(organization=organization, success=True, errors=[])
+        except Exception as e:
+            return UpdateOrganization(organization=None, success=False, errors=[str(e)])
+
+
+class DeleteOrganization(graphene.Mutation):
+    class Arguments:
+        organization_id = graphene.Int(required=True)
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, organization_id):
+        try:
+            deleted = OrganizationService.delete_organization(organization_id)
+            if not deleted:
+                return DeleteOrganization(success=False, errors=[f"Organization with ID {organization_id} not found"])
+            return DeleteOrganization(success=True, errors=[])
+        except Exception as e:
+            return DeleteOrganization(success=False, errors=[str(e)])
+
+
 class AddTaskComment(graphene.Mutation):
     class Arguments:
         input = TaskCommentInput(required=True)
@@ -351,6 +494,9 @@ class Mutation(graphene.ObjectType):
     create_task = CreateTask.Field()
     update_task = UpdateTask.Field()
     add_task_comment = AddTaskComment.Field()
+    create_organization = CreateOrganization.Field()
+    update_organization = UpdateOrganization.Field()
+    delete_organization = DeleteOrganization.Field()
 
 
 # Root Schema

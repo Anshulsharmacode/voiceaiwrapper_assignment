@@ -40,7 +40,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
 
     try {
       const input = {
-        projectId,
+        projectId: Number(projectId),
         title: formData.title,
         description: formData.description,
         status: formData.status,
@@ -51,7 +51,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
       if (task) {
         const result: any = await updateTask({
           variables: {
-            taskId: task.id,
+            taskId: Number(task.id),
             input,
           },
         });

@@ -68,6 +68,21 @@ export const GET_PROJECT = gql`
   }
 `;
 
+export const GET_TASKS_BY_PROJECT = gql`
+  query GetTasksByProject($projectId: Int!) {
+    tasksByProject(projectId: $projectId) {
+      id
+      title
+      description
+      status
+      assigneeEmail
+      dueDate
+      createdAt
+      commentCount
+    }
+  }
+`;
+
 export const GET_TASK = gql`
   query GetTask($taskId: Int!) {
     task(taskId: $taskId) {
@@ -180,6 +195,7 @@ interface GraphQLContextType {
   getProjectsByOrganization: (organizationId: number) => any;
   getProjectStatistics: (organizationId: number) => any;
   getProject: (projectId: number) => any;
+  getTasksByProject: (projectId: number) => any;
   getTask: (taskId: number) => any;
   createProject: (input: any) => any;
   updateProject: (projectId: number, input: any) => any;
@@ -227,6 +243,13 @@ export const useProject = (projectId: number) => {
   });
 };
 
+export const useTasksByProject = (projectId: number) => {
+  return useQuery(GET_TASKS_BY_PROJECT, {
+    variables: { projectId },
+    skip: !projectId,
+  });
+};
+
 export const useTask = (taskId: number) => {
   return useQuery(GET_TASK, {
     variables: { taskId },
@@ -248,13 +271,13 @@ export const useUpdateProject = () => {
 
 export const useCreateTask = () => {
   return useMutation(CREATE_TASK, {
-    refetchQueries: ['GetProject', 'GetTask'],
+    refetchQueries: ['GetProject', 'GetTask', 'GetTasksByProject'],
   });
 };
 
 export const useUpdateTask = () => {
   return useMutation(UPDATE_TASK, {
-    refetchQueries: ['GetTask', 'GetProject'],
+    refetchQueries: ['GetTask', 'GetProject', 'GetTasksByProject'],
   });
 };
 
