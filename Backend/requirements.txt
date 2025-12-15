@@ -1,5 +1,6 @@
 Django==4.2.27
-psycopg2-binary==2.9.9
+# psycopg2-binary wheels are not built for Python 3.13; use psycopg v3 binary.
+psycopg[binary]==3.1.19
 python-decouple==3.8
 graphene-django==3.1.5
 django-cors-headers==4.3.1
