@@ -1,30 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface OrganizationFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreated: (organization: { id: number; name: string; contact_email: string; slug: string | null }) => void;
+  onCreated: (organization: {
+    id: number;
+    name: string;
+    contact_email: string;
+    slug: string | null;
+  }) => void;
 }
 
 const BACKEND_BASE_URL =
   import.meta.env.VITE_BACKEND_BASE_URL ||
   (import.meta.env.VITE_GRAPHQL_ENDPOINT
-    ? import.meta.env.VITE_GRAPHQL_ENDPOINT.replace(/\/graphql\/?$/, '')
-    : 'http://localhost:8000');
+    ? import.meta.env.VITE_GRAPHQL_ENDPOINT.replace(/\/graphql\/?$/, "")
+    : "http://localhost:8000");
 
-const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, onCreated }) => {
-  const [name, setName] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [slug, setSlug] = useState('');
+const OrganizationForm: React.FC<OrganizationFormProps> = ({
+  isOpen,
+  onClose,
+  onCreated,
+}) => {
+  const [name, setName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [slug, setSlug] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const reset = () => {
-    setName('');
-    setContactEmail('');
-    setSlug('');
+    setName("");
+    setContactEmail("");
+    setSlug("");
     setError(null);
   };
 
@@ -35,9 +44,9 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
 
     try {
       const response = await fetch(`${BACKEND_BASE_URL}/api/organizations/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name,
@@ -52,7 +61,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
         const message =
           data?.error ||
           (data?.errors && JSON.stringify(data.errors)) ||
-          'Failed to create organization';
+          "Failed to create organization";
         throw new Error(message);
       }
 
@@ -60,7 +69,9 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
       reset();
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Something went wrong while creating organization');
+      setError(
+        err.message || "Something went wrong while creating organization",
+      );
     } finally {
       setLoading(false);
     }
@@ -70,7 +81,9 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         <div className="flex justify-between items-center px-6 py-4 border-b">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900">Create Organization</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+            Create Organization
+          </h2>
           <button
             type="button"
             onClick={() => {
@@ -93,7 +106,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg !bg-white !text-slate-900 !placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Acme Inc."
             />
           </div>
@@ -107,24 +120,24 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg !bg-white !text-slate-900 !placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="admin@acme.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-black">
               Slug (optional)
             </label>
             <input
               type="text"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg !bg-white !text-slate-900 !placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="acme-inc"
             />
             <p className="mt-1 text-xs text-gray-500">
-              If left empty, the slug will be generated from the name.
+              If left empty, the slug will be generated from the name
             </p>
           </div>
 
@@ -150,7 +163,7 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
               disabled={loading}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm sm:text-base"
             >
-              {loading ? 'Creating...' : 'Create'}
+              {loading ? "Creating..." : "Create"}
             </button>
           </div>
         </form>
@@ -160,5 +173,3 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({ isOpen, onClose, on
 };
 
 export default OrganizationForm;
-
-

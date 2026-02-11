@@ -28,10 +28,12 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
   useEffect(() => {
     if (task) {
+      const normalizeStatus = (status?: string) =>
+        status ? status.toLowerCase() : status;
       setFormData({
         title: task.title || "",
         description: task.description || "",
-        status: task.status || "todo",
+        status: normalizeStatus(task.status) || "todo",
         assigneeEmail: task.assigneeEmail || "",
         dueDate: task.dueDate
           ? new Date(task.dueDate).toISOString().split("T")[0]
@@ -115,7 +117,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
                 setFormData({ ...formData, title: e.target.value })
               }
               required
-              className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full !text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -129,7 +131,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full !text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -143,7 +145,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
                 setFormData({ ...formData, status: e.target.value })
               }
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full !text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="todo">Todo</option>
               <option value="in_progress">In Progress</option>
@@ -161,7 +163,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
               onChange={(e) =>
                 setFormData({ ...formData, assigneeEmail: e.target.value })
               }
-              className="w-full bg-white text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-white !text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -175,7 +177,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full !text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 

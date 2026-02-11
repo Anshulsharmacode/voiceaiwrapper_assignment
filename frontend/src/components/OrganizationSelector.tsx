@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import OrganizationForm from './OrganizationForm';
+import React, { useEffect, useState } from "react";
+import OrganizationForm from "./OrganizationForm";
 
 interface Organization {
   id: number;
@@ -16,10 +16,13 @@ interface OrganizationSelectorProps {
 const BACKEND_BASE_URL =
   import.meta.env.VITE_BACKEND_BASE_URL ||
   (import.meta.env.VITE_GRAPHQL_ENDPOINT
-    ? import.meta.env.VITE_GRAPHQL_ENDPOINT.replace(/\/graphql\/?$/, '')
-    : 'http://localhost:8000');
+    ? import.meta.env.VITE_GRAPHQL_ENDPOINT.replace(/\/graphql\/?$/, "")
+    : "http://localhost:8000");
 
-const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({ value, onChange }) => {
+const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
+  value,
+  onChange,
+}) => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,7 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({ value, onCh
         const data = await response.json();
 
         if (!response.ok || !data.success) {
-          const message = data?.error || 'Failed to load organizations';
+          const message = data?.error || "Failed to load organizations";
           throw new Error(message);
         }
 
@@ -44,7 +47,7 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({ value, onCh
           onChange(data.data[0].id);
         }
       } catch (err: any) {
-        setError(err.message || 'Error loading organizations');
+        setError(err.message || "Error loading organizations");
       } finally {
         setLoading(false);
       }
@@ -67,36 +70,33 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({ value, onCh
         </label>
         <div className="flex gap-2">
           <select
-            value={value || ''}
+            value={value || ""}
             onChange={(e) => {
               const id = Number(e.target.value);
               if (id) onChange(id);
             }}
-            className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            className="flex-1 min-w-0 px-3 py-2 border border-gray-300 bg-black  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             disabled={loading || organizations.length === 0}
           >
             {loading && <option value="">Loading organizations...</option>}
             {!loading && organizations.length === 0 && (
-              <option value="">No organizations. Create one to get started.</option>
+              <option value="">
+                No organizations. Create one to get started.
+              </option>
             )}
-            {!loading &&
-              organizations.length > 0 && (
-                <>
-                  <option value="">Select organization</option>
-                  {organizations.map((org) => (
-                    <option key={org.id} value={org.id}>
-                      {org.name} (#{org.id})
-                    </option>
-                  ))}
-                </>
-              )}
+            {!loading && organizations.length > 0 && (
+              <>
+                <option value="">Select organization</option>
+                {organizations.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.name} (#{org.id})
+                  </option>
+                ))}
+              </>
+            )}
           </select>
         </div>
-        {error && (
-          <p className="mt-1 text-xs text-red-600">
-            {error}
-          </p>
-        )}
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
 
       <button
@@ -117,5 +117,3 @@ const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({ value, onCh
 };
 
 export default OrganizationSelector;
-
-

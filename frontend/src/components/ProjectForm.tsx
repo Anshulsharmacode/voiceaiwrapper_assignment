@@ -55,7 +55,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       if (project) {
         const result: any = await updateProject({
           variables: {
-            projectId: project.id,
+            projectId: Number(project.id),
             input,
           },
         });
@@ -102,7 +102,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-black mb-1">
               Name *
             </label>
             <input
@@ -112,7 +112,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 setFormData({ ...formData, name: e.target.value })
               }
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
             />
           </div>
 
@@ -126,7 +126,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
             />
           </div>
 
@@ -140,7 +140,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 setFormData({ ...formData, status: e.target.value })
               }
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
             >
               <option value="active">Active</option>
               <option value="completed">Completed</option>
@@ -158,7 +158,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
             />
           </div>
 

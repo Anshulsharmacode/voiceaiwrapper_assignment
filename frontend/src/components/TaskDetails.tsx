@@ -17,7 +17,12 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId, onClose }) => {
   if (loading) return <div className="text-center py-8 text-slate-300">Loading task details...</div>;
   if (error) return <div className="text-red-300 text-center py-8">Error: {error.message}</div>;
 
-  const task = (data as any)?.task;
+  const normalizeStatus = (status?: string) =>
+    status ? status.toLowerCase() : status;
+
+  const task = (data as any)?.task
+    ? { ...(data as any).task, status: normalizeStatus((data as any).task.status) }
+    : null;
 
   if (!task) return null;
 

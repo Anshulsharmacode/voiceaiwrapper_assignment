@@ -35,8 +35,15 @@ const TasksList: React.FC<TasksListProps> = ({ projectId, onTaskSelect }) => {
       </div>
     );
 
+  const normalizeStatus = (status?: string) =>
+    status ? status.toLowerCase() : status;
+
   const project = (projectData as any)?.project;
-  const tasks = (tasksData as any)?.tasksByProject || [];
+  const tasks =
+    (tasksData as any)?.tasksByProject?.map((task: any) => ({
+      ...task,
+      status: normalizeStatus(task.status),
+    })) || [];
 
   const getStatusColor = (status: string) => {
     switch (status) {

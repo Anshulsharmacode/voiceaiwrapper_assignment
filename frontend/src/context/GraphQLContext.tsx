@@ -262,6 +262,7 @@ export const useCreateProject = () => {
 export const useUpdateProject = () => {
   return useMutation(UPDATE_PROJECT, {
     refetchQueries: ["GetProjectsByOrganization", "GetProject"],
+    awaitRefetchQueries: true,
   });
 };
 
