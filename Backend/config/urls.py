@@ -16,9 +16,10 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,4 +28,10 @@ urlpatterns = [
     path("api/tasks/", include("task.urls")),
     path("api/task-comments/", include("taskComment.urls")),
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    # Serve the React SPA for the root path
+    path("", TemplateView.as_view(template_name="index.html"), name="spa"),
+    # Catch-all to let React Router handle client-side routes (must be last)
+    re_path(
+        r"^(?:.*)/?$", TemplateView.as_view(template_name="index.html"), name="spa-catchall"
+    ),
 ]

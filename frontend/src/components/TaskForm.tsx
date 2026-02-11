@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useCreateTask, useUpdateTask } from '../context/GraphQLContext';
+import React, { useState, useEffect } from "react";
+import { useCreateTask, useUpdateTask } from "../context/GraphQLContext";
 
 interface TaskFormProps {
   projectId: number;
@@ -8,15 +8,20 @@ interface TaskFormProps {
   onSuccess: () => void;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess }) => {
+const TaskForm: React.FC<TaskFormProps> = ({
+  projectId,
+  task,
+  onClose,
+  onSuccess,
+}) => {
   const [createTask] = useCreateTask();
   const [updateTask] = useUpdateTask();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    status: 'todo',
-    assigneeEmail: '',
-    dueDate: '',
+    title: "",
+    description: "",
+    status: "todo",
+    assigneeEmail: "",
+    dueDate: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,11 +29,13 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
   useEffect(() => {
     if (task) {
       setFormData({
-        title: task.title || '',
-        description: task.description || '',
-        status: task.status || 'todo',
-        assigneeEmail: task.assigneeEmail || '',
-        dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
+        title: task.title || "",
+        description: task.description || "",
+        status: task.status || "todo",
+        assigneeEmail: task.assigneeEmail || "",
+        dueDate: task.dueDate
+          ? new Date(task.dueDate).toISOString().split("T")[0]
+          : "",
       });
     }
   }, [task]);
@@ -45,7 +52,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
         description: formData.description,
         status: formData.status,
         assigneeEmail: formData.assigneeEmail || null,
-        dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null,
+        dueDate: formData.dueDate
+          ? new Date(formData.dueDate).toISOString()
+          : null,
       };
 
       if (task) {
@@ -56,20 +65,24 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
           },
         });
         if (!result.data?.updateTask?.success) {
-          throw new Error(result.data?.updateTask?.errors?.[0] || 'Failed to update task');
+          throw new Error(
+            result.data?.updateTask?.errors?.[0] || "Failed to update task",
+          );
         }
       } else {
         const result: any = await createTask({
           variables: { input },
         });
         if (!result.data?.createTask?.success) {
-          throw new Error(result.data?.createTask?.errors?.[0] || 'Failed to create task');
+          throw new Error(
+            result.data?.createTask?.errors?.[0] || "Failed to create task",
+          );
         }
       }
 
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      setError(err.message || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -79,8 +92,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">
-            {task ? 'Edit Task' : 'Create Task'}
+          <h2 className="text-xl font-bold text-black">
+            {task ? "Edit Task" : "Create Task"}
           </h2>
           <button
             onClick={onClose}
@@ -98,9 +111,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -110,7 +125,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -122,7 +139,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
             </label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
@@ -139,8 +158,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
             <input
               type="email"
               value={formData.assigneeEmail}
-              onChange={(e) => setFormData({ ...formData, assigneeEmail: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, assigneeEmail: e.target.value })
+              }
+              className="w-full bg-white text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -151,7 +172,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
             <input
               type="datetime-local"
               value={formData.dueDate}
-              onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, dueDate: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -175,7 +198,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ projectId, task, onClose, onSuccess
               disabled={loading}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Saving...' : task ? 'Update' : 'Create'}
+              {loading ? "Saving..." : task ? "Update" : "Create"}
             </button>
           </div>
         </form>

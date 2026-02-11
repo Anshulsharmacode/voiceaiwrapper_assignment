@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useCreateProject, useUpdateProject } from '../context/GraphQLContext';
+import React, { useState, useEffect } from "react";
+import { useCreateProject, useUpdateProject } from "../context/GraphQLContext";
 
 interface ProjectFormProps {
   organizationId: number;
@@ -8,14 +8,19 @@ interface ProjectFormProps {
   onSuccess: () => void;
 }
 
-const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onClose, onSuccess }) => {
+const ProjectForm: React.FC<ProjectFormProps> = ({
+  organizationId,
+  project,
+  onClose,
+  onSuccess,
+}) => {
   const [createProject] = useCreateProject();
   const [updateProject] = useUpdateProject();
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    status: 'active',
-    dueDate: '',
+    name: "",
+    description: "",
+    status: "active",
+    dueDate: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,10 +28,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
   useEffect(() => {
     if (project) {
       setFormData({
-        name: project.name || '',
-        description: project.description || '',
-        status: project.status || 'active',
-        dueDate: project.dueDate ? new Date(project.dueDate).toISOString().split('T')[0] : '',
+        name: project.name || "",
+        description: project.description || "",
+        status: project.status || "active",
+        dueDate: project.dueDate
+          ? new Date(project.dueDate).toISOString().split("T")[0]
+          : "",
       });
     }
   }, [project]);
@@ -53,20 +60,26 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
           },
         });
         if (!result.data?.updateProject?.success) {
-          throw new Error(result.data?.updateProject?.errors?.[0] || 'Failed to update project');
+          throw new Error(
+            result.data?.updateProject?.errors?.[0] ||
+              "Failed to update project",
+          );
         }
       } else {
         const result: any = await createProject({
           variables: { input },
         });
         if (!result.data?.createProject?.success) {
-          throw new Error(result.data?.createProject?.errors?.[0] || 'Failed to create project');
+          throw new Error(
+            result.data?.createProject?.errors?.[0] ||
+              "Failed to create project",
+          );
         }
       }
 
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      setError(err.message || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -76,8 +89,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">
-            {project ? 'Edit Project' : 'Create Project'}
+          <h2 className="text-xl font-bold text-black">
+            {project ? "Edit Project" : "Create Project"}
           </h2>
           <button
             onClick={onClose}
@@ -95,7 +108,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -107,7 +122,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -119,7 +136,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
             </label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
@@ -136,7 +155,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
             <input
               type="date"
               value={formData.dueDate}
-              onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, dueDate: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -160,7 +181,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ organizationId, project, onCl
               disabled={loading}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Saving...' : project ? 'Update' : 'Create'}
+              {loading ? "Saving..." : project ? "Update" : "Create"}
             </button>
           </div>
         </form>

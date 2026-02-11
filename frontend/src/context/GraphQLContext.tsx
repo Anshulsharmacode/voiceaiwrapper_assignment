@@ -1,14 +1,13 @@
 import React, { createContext, type ReactNode, useContext } from "react";
-import {
-  ApolloClient,
-  InMemoryCache,
-  gql,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import { HttpLink } from "@apollo/client/link/http";
 import { ApolloProvider, useMutation, useQuery } from "@apollo/client/react";
 
 const GRAPHQL_ENDPOINT =
-  import.meta.env.VITE_GRAPHQL_ENDPOINT ||"https://voiceaiwrapper-assignment.onrender.com" || "http://localhost:8000/graphql/";
+  import.meta.env.VITE_GRAPHQL_ENDPOINT?.trim() ||
+  (import.meta.env.PROD
+    ? "https://voiceaiwrapper-assignment.onrender.com/graphql/"
+    : "http://localhost:8000/graphql/");
 
 const httpLink = new HttpLink({
   uri: GRAPHQL_ENDPOINT,
@@ -190,7 +189,6 @@ export const ADD_TASK_COMMENT = gql`
   }
 `;
 
-
 interface GraphQLContextType {
   getProjectsByOrganization: (organizationId: number) => any;
   getProjectStatistics: (organizationId: number) => any;
@@ -206,18 +204,16 @@ interface GraphQLContextType {
 
 const GraphQLContext = createContext<GraphQLContextType | undefined>(undefined);
 
-export const GraphQLProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  return (
-    <ApolloProvider client={client}>
-      {children}
-    </ApolloProvider>
-  );
+export const GraphQLProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
 
 export const useGraphQL = () => {
   const context = useContext(GraphQLContext);
   if (!context) {
-    throw new Error('useGraphQL must be used within GraphQLProvider');
+    throw new Error("useGraphQL must be used within GraphQLProvider");
   }
   return context;
 };
@@ -245,7 +241,7 @@ export const useProject = (projectId: number) => {
 
 export const useTasksByProject = (projectId: number) => {
   return useQuery(GET_TASKS_BY_PROJECT, {
-    variables: { projectId },
+    variables: { projectId: Number(projectId) },
     skip: !projectId,
   });
 };
@@ -259,31 +255,31 @@ export const useTask = (taskId: number) => {
 
 export const useCreateProject = () => {
   return useMutation(CREATE_PROJECT, {
-    refetchQueries: ['GetProjectsByOrganization', 'GetProjectStatistics'],
+    refetchQueries: ["GetProjectsByOrganization", "GetProjectStatistics"],
   });
 };
 
 export const useUpdateProject = () => {
   return useMutation(UPDATE_PROJECT, {
-    refetchQueries: ['GetProjectsByOrganization', 'GetProject'],
+    refetchQueries: ["GetProjectsByOrganization", "GetProject"],
   });
 };
 
 export const useCreateTask = () => {
   return useMutation(CREATE_TASK, {
-    refetchQueries: ['GetProject', 'GetTask', 'GetTasksByProject'],
+    refetchQueries: ["GetProject", "GetTask", "GetTasksByProject"],
   });
 };
 
 export const useUpdateTask = () => {
   return useMutation(UPDATE_TASK, {
-    refetchQueries: ['GetTask', 'GetProject', 'GetTasksByProject'],
+    refetchQueries: ["GetTask", "GetProject", "GetTasksByProject"],
   });
 };
 
 export const useAddTaskComment = () => {
   return useMutation(ADD_TASK_COMMENT, {
-    refetchQueries: ['GetTask'],
+    refetchQueries: ["GetTask"],
   });
 };
 

@@ -181,7 +181,7 @@ class Query(graphene.ObjectType):
         description="Get a single task by ID"
     )
 
-    # List all tasks for a specific project
+
     tasks_by_project = graphene.List(
         TaskType,
         project_id=graphene.Int(required=True),
@@ -501,4 +501,5 @@ class Mutation(graphene.ObjectType):
 
 # Root Schema
 schema = graphene.Schema(query=Query, mutation=Mutation)
+
 
